@@ -6,6 +6,22 @@ export function usePokemon() {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
+  // 🌟 Nouvelle variable pour stocker tous les noms
+  // pour fix le probleme des search query et que je puisse retourner celebi si j'ai "celeb" en query
+  const allPokemonNames = ref<{ name: string; url: string }[]>([])
+
+  async function loadAllPokemonNames() {
+    if (allPokemonNames.value.length > 0) return // déjà chargé
+
+    try {
+      const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0')
+      const data = await res.json()
+      allPokemonNames.value = data.results
+    } catch {
+      console.warn('Échec du chargement des noms de Pokémon')
+    }
+  }
+
   async function fetchPokemon(name: string) {
     loading.value = true
     error.value = null
@@ -21,5 +37,5 @@ export function usePokemon() {
     }
   }
 
-  return { pokemon, fetchPokemon, loading, error }
+  return { pokemon, fetchPokemon, loadAllPokemonNames, allPokemonNames, loading, error }
 }

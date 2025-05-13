@@ -44,17 +44,26 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { usePokemon } from '../composables/usePokemon'
 import type { Pokemon } from '../interfaces/Pokemon'
 import PokemonCard from '../components/PokemonCard.vue'
 
 const pokemons = ref<Pokemon[]>([])
-const loading = ref(false)
+// const loading = ref(false)
 const offset = ref(0)
-const limit = 20
+const limit = 151
 const searchQuery = ref('')
 const scrollContainer = ref<HTMLElement | null>(null)
 const selectedLanguage = ref('fr')
 const localizedNames = ref<Record<number, string>>({})
+const {
+  fetchPokemon,
+  pokemon,
+  loading,
+  error,
+  allPokemonNames,
+  loadAllPokemonNames
+} = usePokemon()
 
 async function loadMore() {
   if (loading.value) return
@@ -115,7 +124,8 @@ const filteredPokemons = computed(() => {
 })
 
 onMounted(() => {
-  loadMore()
+  loadMore(),
+  loadAllPokemonNames()
 })
 
 watch(selectedLanguage, async (newLang) => {
@@ -133,5 +143,31 @@ watch(selectedLanguage, async (newLang) => {
   })
 
   await Promise.all(promises)
+})
+
+watch(searchQuery, async (val) => {
+  const query = val.trim().toLowerCase()
+
+  if (!query || query.length < 2) return
+
+  const alreadyInList = filteredPokemons.value.length > 0
+  if (alreadyInList) return
+
+  // Recherche dans la liste locale des noms complets
+  const match = allPokemonNames.value.find(p =>
+    p.name.toLowerCase().startsWith(query)
+  )
+
+  if (match) {
+    await fetchPokemon(match.name)
+
+    // Ajoute à la liste principale si pas déjà dedans
+    if (pokemon.value) {
+      const alreadyAdded = pokemons.value.some(p => p.id === pokemon.value!.id)
+      if (!alreadyAdded) {
+        pokemons.value.push(pokemon.value)
+      }
+    }
+  }
 })
 </script>
