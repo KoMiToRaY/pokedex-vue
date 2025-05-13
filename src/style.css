@@ -1,0 +1,13 @@
+@import 'tailwindcss';
+
+@theme colors {
+  @each $name, $value in $colors {
+    .from-#{$name} {
+      --tw-gradient-from: #{$value};
+      --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+    }
+    .to-#{$name} {
+      --tw-gradient-to: #{$value};
+    }
+  }
+}
