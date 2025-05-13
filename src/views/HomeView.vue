@@ -27,14 +27,18 @@
       </select>
     </div>
 
-    <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+    <transition-group
+      name="fade-cascade"
+      tag="div"
+      class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+    >
       <PokemonCard
         v-for="poke in filteredPokemons"
         :key="poke.id"
         :pokemon="poke"
         :localizedName="localizedNames[poke.id] ?? poke.name"
       />
-    </div>
+    </transition-group>
 
     <div class="mt-6 text-center text-gray-600" v-if="loading">
       Chargement...
@@ -171,3 +175,23 @@ watch(searchQuery, async (val) => {
   }
 })
 </script>
+
+<style scoped>
+.fade-cascade-enter-active {
+  animation: fadeUp 0.4s ease forwards;
+}
+.fade-cascade-leave-active {
+  display: none;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+</style>
