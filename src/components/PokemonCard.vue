@@ -1,11 +1,12 @@
 <template>
   <div
-      class="rounded-xl p-4 shadow flex flex-col items-center text-white bg-gradient-to-br from-[var(--from)] to-[var(--to)]"
-      :style="{
-        '--from': getColor(type1),
-        '--to': getColor(type2 ?? type1)
-      }"
-    >
+    data-testid="pokemon-card"
+    class="rounded-xl p-4 shadow flex flex-col items-center text-white bg-gradient-to-br from-[var(--from)] to-[var(--to)]"
+    :style="{
+      '--from': getColor(type1),
+      '--to': getColor(type2 ?? type1)
+    }"
+  >
     <h2 class="text-lg font-bold text-gray-800 mb-2 text-center">
       #{{ pokemon.id }} – {{ localizedName }}
     </h2>
